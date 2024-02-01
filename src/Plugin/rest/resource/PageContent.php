@@ -46,7 +46,7 @@ class PageContent extends ResourceBase {
 	protected $currentRequest;
 
 	const DIAGNOSIS_SLUG = '/diagnosis-list';
-	const TEST_AND_SIGN_SLUG = '/test-list';
+	const TEST_AND_SIGN_SLUG = '/exams-signs';
 	const DIAGNOSTIC_STUDIES_SLUG = '/studies';
 	const ANATOMY_BODY_SYSTEMS_SLUG = '/body-systems';
 	const TUMORS_SLUG = '/tumors';
@@ -55,21 +55,21 @@ class PageContent extends ResourceBase {
 	const BOOKMARKS_SLUG = '/bookmarks';
 
 	const DIAGNOSIS_MACHINE_NAME = 'diagnosis';
-	const TEST_AND_SIGN_MACHINE_NAME = 'test_and_sign_list';
-	const DIAGNOSTIC_STUDIES_MACHINE_NAME = 'work_up_options';
+	const TEST_AND_SIGN_MACHINE_NAME = 'exams_and_signs_list';
+	const DIAGNOSTIC_STUDIES_MACHINE_NAME = 'diagnostic_studies';
 	const HAND_THERAPY_LIBRARY_MACHINE_NAME = 'hand_therapy_library';
 	const ANATOMY_MACHINE_NAME = 'anatomic_parts';
 	const BODY_SYSTEMS_MACHINE_NAME = 'body_systems';
 
 	const BODY_SYSTEMS_FIELD_NAME = 'field_body_systems';
 	const ANATOMIC_PARTS_FIELD_NAME = 'field_anatomic_parts';
-	const DO_NOT_LIST_INSIDE_ANATOMY_PAGE_FIELD_NAME = 'field_list_inside_anatomy_page';
-	const CONGENITAL_DIAGNOSIS_LIST_FIELD_NAME = 'field_congenital';
+	const DO_NOT_LIST_INSIDE_ANATOMY_PAGE_FIELD_NAME = 'field_should_hide_inside_anatomy';
+	const CONGENITAL_DIAGNOSIS_LIST_FIELD_NAME = 'field_is_this_congenital';
 
 	const TUMORS_TERM_NAME = 'Tumor';
 
 	const DIAGNOSIS_GROUP_LABELS_MACHINE_NAME = 'diagnosis_group_labels';
-	const DIAGNOSIS_PAGE_CUTOMIZATION_COLLECTION_FIELD_NAME = 'field_page_view_customization';
+	const DIAGNOSIS_PAGE_CUSTOMIZATION_COLLECTION_FIELD_NAME = 'page_view_customization';
 
 	private $bookmarks = NULL;
 
@@ -147,7 +147,7 @@ class PageContent extends ResourceBase {
 		    else if ($page == self::CONGENITAL_SLUG) {
 				$response = $this->get_congenital_diagnosis_list();
 		    }
-			else if ($page == self::HAND_THERAPY_LIBRARY_SLUG) {
+		    else if ($page == self::HAND_THERAPY_LIBRARY_SLUG) {
 				$response = $this->get_normal_published_term_list(self::HAND_THERAPY_LIBRARY_MACHINE_NAME);
 		    }
 		    else if ($page == self::BOOKMARKS_SLUG) {
@@ -203,7 +203,7 @@ class PageContent extends ResourceBase {
 		$database = \Drupal::database();
 
 	    $sql = "SELECT 
-		  b.item_id AS entry_id,	
+		  b.id AS entry_id,	
 		  a.entity_id,
 		  c.field_article_title_value AS title,
 		  d.field_jump_to_value AS jump_to,
@@ -216,20 +216,20 @@ class PageContent extends ResourceBase {
 		  {taxonomy_term__field_page_view_customization} AS a
 		  ON terms.tid = a.entity_id
 		  JOIN
-		  {field_collection_item} AS b
-		  ON a.field_page_view_customization_target_id = b.item_id
+		  {paragraphs_item} AS b
+		  ON a.field_page_view_customization_value = b.id
 		  JOIN
-		  {field_collection_item__field_article_title} AS c
-		  ON a.field_page_view_customization_target_id = c.entity_id 
+		  {paragraph__field_article_title} AS c
+		  ON a.field_page_view_customization_value = c.entity_id 
 		  LEFT JOIN 
-		  {field_collection_item__field_jump_to} AS d
-		  ON a.field_page_view_customization_target_id = d.entity_id AND d.deleted = '0' AND d.bundle = :field_pvc
+		  {paragraph__field_jump_to} AS d
+		  ON a.field_page_view_customization_value = d.entity_id AND d.deleted = '0' AND d.bundle = :field_pvc
 		  LEFT JOIN 
-		  {field_collection_item__field_redirect_to} AS e
-		  ON a.field_page_view_customization_target_id = e.entity_id AND e.deleted = '0' AND e.bundle = :field_pvc
+		  {paragraph__field_redirect_to} AS e
+		  ON a.field_page_view_customization_value = e.entity_id AND e.deleted = '0' AND e.bundle = :field_pvc
 		  LEFT JOIN 
-		  {field_collection_item__field_label_group} AS f
-		  ON a.field_page_view_customization_target_id = f.entity_id AND f.deleted = '0' AND f.bundle = :field_pvc
+		  {paragraph__field_label_group} AS f
+		  ON a.field_page_view_customization_value = f.entity_id AND f.deleted = '0' AND f.bundle = :field_pvc
 		  LEFT JOIN 
 		  {taxonomy_term_field_data} AS fdata
 		  ON f.field_label_group_target_id = fdata.tid AND fdata.vid = :glabel AND fdata.status = '1'
@@ -237,13 +237,13 @@ class PageContent extends ResourceBase {
 		  AND terms.vid = :vid 
 		  AND a.bundle = :vid 
 		  AND a.deleted = '0' 
-		  AND b.field_name = :field_pvc
+		  AND b.type = :field_pvc
 		  AND c.deleted = '0'
 		ORDER BY title ASC";
 
 		$values = array(
 			':vid' => self::DIAGNOSIS_MACHINE_NAME,
-			':field_pvc' => self::DIAGNOSIS_PAGE_CUTOMIZATION_COLLECTION_FIELD_NAME,
+			':field_pvc' => self::DIAGNOSIS_PAGE_CUSTOMIZATION_COLLECTION_FIELD_NAME,
 			':glabel' => self::DIAGNOSIS_GROUP_LABELS_MACHINE_NAME
 		);
 
