@@ -1,0 +1,7 @@
+
+handsurgeryresource_module.csrftoken:
+  path: 'rest/session/token'
+  defaults:
+    _controller: '\Drupal\system\Controller\CsrfTokenController::csrfToken'
+  requirements:
+    _access: 'TRUE'

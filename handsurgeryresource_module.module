@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * Implements hook_cron().
+ */
+function handsurgeryresource_module_cron() {
+	
+	$expire = strtotime('-1 hour');
+	$dir = 'sites/default/files/article_pdf';
+	
+	if(is_dir($dir)) {
+	    
+	  	$files = glob($dir . '/*');
+	  	foreach ($files as $file) {
+
+		    // Skip anything that is not a file
+		    if (!is_file($file)) {
+		        continue;
+		    }
+		    
+		    // Delete any files those are expired				    
+		    if (filemtime($file) < $expire) {
+		        //echo date('Y-m-d h:i:s', filemtime($file)).PHP_EOL;
+		        unlink($file);
+		    }
+
+		}
+
+	}	
+
+}
+
+?>
