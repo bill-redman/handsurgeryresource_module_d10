@@ -130,7 +130,7 @@ class ArticleContent extends ResourceBase {
 		$cat = $term->bundle();
 
 		//$cat != PageContent::DIAGNOSIS_MACHINE_NAME && $cat != PageContent::TEST_AND_SIGN_MACHINE_NAME && $cat != PageContent::DIAGNOSTIC_STUDIES_MACHINE_NAME
-		if($cat != 'diagnosis' && $cat != 'test_and_sign_list' && $cat != 'work_up_options' && $cat != 'hand_therapy_library'){
+		if($cat != 'diagnosis' && $cat != 'exams_and_signs_list' && $cat != 'diagnostic_studies' && $cat != 'hand_therapy_library'){
 			throw new BadRequestHttpException('Article from invalid vocabulary');
 		}		
 
@@ -150,44 +150,44 @@ class ArticleContent extends ResourceBase {
 
 		$fields = array(
 			'diagnosis' => array(
-				'field_clinical_presentation_pics',
-				'field_basic_science_pics',
-				'field_pathoanatomy_pics',
-				'field_symptoms_1',
+				'field_clinical_presentation_phot',
+				'field_basic_science_photos',
+				'field_pathoanatomy_photos',
+				'field_symptoms',
 				'field_typical_history',
 				'field_positive_tests_exams',
 				'field_work_up_options',
 				'field_images',
 				'field_treatment_goals',
-				'field_non_operative',
+				'field_conservative',
 				'field_operative',
-				'field_treatment_photos',
-				'field_cpt_code_agree',
+				'field_treatment_photos_and_diagr',
+				'field_cpt_code_agreement',
 				'field_cpt_codes_for_treatment',
-				'field_cpt_references',
+				'field_cpt_code_references',
 				'field_hand_therapy',
 				'field_hand_therapy_photos',
-				'field_complications1',
-				'field_outcomes1',
+				'field_complications',
+				'field_outcomes',
 				'field_videos',
 				'field_youtube_videos',
-				'field_key_educational',
+				'field_key_educational_points',
 				'field_practice_and_cme',
 				'field_references',
 				'field_icd_10_new'
 			),
-			'test_and_sign_list' => array(
+			'exams_and_signs_list' => array(
 				'field_additional_information',
-				'field_clinical_presentation',
-				'field_positive_definition',
-				'field_negative_definition',
+				'field_presentation_photos',
+				'field_definition_positive',
+				'field_definition_negative',
 				'field_comments_and_pearls',
-				'field_diagnoses_associated_with_',
+				'field_diagnoses_associated_with',
 				'field_videos',
 				'field_youtube_videos',
 				'field_references'
 			),
-			'work_up_options' => array(
+			'diagnostic_studies' => array(
 				'field_study_photos',
 				'field_study_videos',
 				'field_upload_docs',
@@ -196,8 +196,8 @@ class ArticleContent extends ResourceBase {
 				'field_references'
 			),
 			'hand_therapy_library' => array(
-				'field_diagnoses_associated_with_',
-				'field_comments_and',
+				'field_diagnoses_where_this_inter',
+				'field_comments_and_pearls',
 				'field_images',
 				'field_references',
 				'field_videos'
@@ -444,15 +444,15 @@ class ArticleContent extends ResourceBase {
 		if(	$value == 'description' ){
 			$html .= $details['values'][0]['processed'];
 		}
-		elseif(	$value == 'field_clinical_presentation_pics' || 
-			$value == 'field_basic_science_pics' ||
-			$value == 'field_pathoanatomy_pics' || 
+		elseif(	$value == 'field_clinical_presentation_phot' || 
+			$value == 'field_basic_science_photos' ||
+			$value == 'field_pathoanatomy_photos' || 
 			$value == 'field_images' ||
-			$value == 'field_treatment_photos' ||
+			$value == 'field_treatment_photos_and_diagr' ||
 			$value == 'field_hand_therapy_photos' ||
 			$value == 'field_videos' ||
 			$value == 'field_youtube_videos' ||
-			$value == 'field_clinical_presentation' ||
+			$value == 'field_presentation_photos' ||
 			$value == 'field_study_videos'
 		){
 			foreach($details['values'] as $clitem){
@@ -461,7 +461,7 @@ class ArticleContent extends ResourceBase {
 					
 					switch ($fclkey) {
 
-						case 'field_clinical_pres_label':
+						case 'field_clinical_presentation_labe':
 						case 'field_basic_science_label':
 						case 'field_pathoanatomy_label':
 						case 'field_images_label':
@@ -473,13 +473,13 @@ class ArticleContent extends ResourceBase {
 							$html .= '<div class="pdf-label">'.$fclfield.'</div>';
 							break;
 
-						case 'field_clinical_pres_photos':
-						case 'field_basic_sci_photos':
-						case 'field_pathoanat_photos':
+						case 'field_clinical_presentation_pics':
+						case 'field_basic_science_pics':
+						case 'field_pathoanatomy_pics':
 						case 'field_images_upload':
-						case 'field_upload_treat_pics':
+						case 'field_treatment_photos':
 						case 'field_hand_therapy_pics':
-						case 'field_clinical_pres_pics':
+						case 'field_presentation_pics':
 
 							foreach ($fclfield as $imkey => $imvalue) {								
 								$html .= '<img class="pdf-img" src="'.$imvalue['url'].'"/>';
@@ -493,7 +493,7 @@ class ArticleContent extends ResourceBase {
 							}							
 							break;
 							
-						case 'field_video_title_yt':
+						case 'field_video_title':
 							$html .= '<span>'.$fclfield.':</span> ';
 							break;
 
@@ -518,33 +518,32 @@ class ArticleContent extends ResourceBase {
 		}				
 		elseif(	$value == 'field_typical_history' ||
 			$value == 'field_treatment_goals' ||
-			$value == 'field_non_operative' ||
+			$value == 'field_conservative' ||
 			$value == 'field_operative' ||
 			$value == 'field_hand_therapy' ||
-			$value == 'field_complications1' ||
-			$value == 'field_outcomes1' ||
-			$value == 'field_key_educational' ||
+			$value == 'field_complications' ||
+			$value == 'field_outcomes' ||
+			$value == 'field_key_educational_points' ||
 			$value == 'field_practice_and_cme' ||
 			$value == 'field_references' ||
-			$value == 'field_positive_definition' ||
-			$value == 'field_negative_definition' ||
-			$value == 'field_comments_and_pearls' ||
-			$value == 'field_comments_and'
+			$value == 'field_definition_positive' ||
+			$value == 'field_definition_negative' ||
+			$value == 'field_comments_and_pearls'
 		){ 
 			$html .= $details['values'][0]['processed'];
 		}
 		elseif(	$value == 'field_positive_tests_exams' ||
 			$value == 'field_work_up_options' ||
 			$value == 'field_additional_information' ||
-			$value == 'field_diagnoses_associated_with_' ||
+			$value == 'field_diagnoses_associated_with' ||
 			$value == 'field_diagnoses_where_this_study'
 		){
 			foreach($details['values'] as $clitem){	
 				$html .= '<div class="pdf-label">'.$clitem['name'].'</div>';
 			}
 		}
-		elseif(	$value == 'field_cpt_code_agree' || 
-			$value == 'field_cpt_references'
+		elseif(	$value == 'field_cpt_code_agreement' || 
+			$value == 'field_cpt_code_references'
 		){
 			$strng = preg_replace("/<input[^>]+\>/i", "", $details['values'][0]['processed']);
 			$html .= '<div class="pdf-agree">'.$strng.'</div>';			
@@ -591,15 +590,15 @@ class ArticleContent extends ResourceBase {
 			//$term->get("description")->processed->__toString();
 			$field_values = $details['description'];
 		}
-		elseif(	$value == 'field_clinical_presentation_pics' || 
-			$value == 'field_basic_science_pics' ||
-			$value == 'field_pathoanatomy_pics' || 
+		elseif(	$value == 'field_clinical_presentation_phot' || 
+			$value == 'field_basic_science_photos' ||
+			$value == 'field_pathoanatomy_photos' || 
 			$value == 'field_images' ||
-			$value == 'field_treatment_photos' ||
+			$value == 'field_treatment_photos_and_diagr' ||
 			$value == 'field_hand_therapy_photos' ||
 			$value == 'field_videos' ||
 			$value == 'field_youtube_videos' ||
-			$value == 'field_clinical_presentation' ||
+			$value == 'field_presentation_photos' ||
 			$value == 'field_study_videos'
 		){
 			$multiple = true;
@@ -616,7 +615,7 @@ class ArticleContent extends ResourceBase {
 						switch ($fclkey) {
 
 							case 'item_id':
-							case 'field_clinical_pres_label':
+							case 'field_clinical_presentation_label':
 							case 'field_basic_science_label':
 							case 'field_pathoanatomy_label':
 							case 'field_images_label':
@@ -628,13 +627,13 @@ class ArticleContent extends ResourceBase {
 								$field_values[$id][$fclkey] = $fclfield->value;
 								break;
 
-							case 'field_clinical_pres_photos':
-							case 'field_basic_sci_photos':
-							case 'field_pathoanat_photos':
+							case 'field_clinical_presentation_pics':
+							case 'field_basic_science_pics':
+							case 'field_pathoanatomy_pics':
 							case 'field_images_upload':
-							case 'field_upload_treat_pics':
+							case 'field_treatment_photos':
 							case 'field_hand_therapy_pics':
-							case 'field_clinical_pres_pics':
+							case 'field_presentation_pics':
 
 								//$field_values[$id][$fclkey] = $fclfield;
 								$cl_images = [];
@@ -680,7 +679,7 @@ class ArticleContent extends ResourceBase {
 								$field_values[$id][$fclkey] = $cl_files;
 								break;
 
-							case 'field_video_title_yt':									
+							case 'field_video_title':									
 								$field_values[$id][$fclkey] = $fclfield->value;										
 								break;
 
@@ -701,24 +700,23 @@ class ArticleContent extends ResourceBase {
 			}
 			
 		}
-		elseif(	$value == 'field_symptoms_1' ){
+		elseif(	$value == 'field_symptoms' ){
 			$multiple = true;
 			$field_values = $details[$value];
 		}				
 		elseif(	$value == 'field_typical_history' ||
 			$value == 'field_treatment_goals' ||
-			$value == 'field_non_operative' ||
+			$value == 'field_conservative' ||
 			$value == 'field_operative' ||
 			$value == 'field_hand_therapy' ||
 			$value == 'field_complications1' ||
-			$value == 'field_outcomes1' ||
-			$value == 'field_key_educational' ||
+			$value == 'field_outcomes' ||
+			$value == 'field_key_educational_points' ||
 			$value == 'field_practice_and_cme' ||
 			$value == 'field_references' ||
-			$value == 'field_positive_definition' ||
-			$value == 'field_negative_definition' ||
-			$value == 'field_comments_and_pearls' ||
-			$value == 'field_comments_and'
+			$value == 'field_definition_positive' ||
+			$value == 'field_definition_negative' ||
+			$value == 'field_comments_and_pearls'
 		){ 
 			if(isset($details[$value][0]['value']))
 				$details[$value][0]['processed'] = check_markup($details[$value][0]['value'], 'full_html');
@@ -747,16 +745,16 @@ class ArticleContent extends ResourceBase {
 			}
 
 		}
-		elseif(	$value == 'field_cpt_code_agree' || 
-			$value == 'field_cpt_references'
+		elseif(	$value == 'field_cpt_code_agreement' || 
+			$value == 'field_cpt_code_references'
 		){
 			foreach($details[$value] as $pkey => $pitem){
 				
 				$pfield_name = $value;
 				$markup = 'code_view_only';
 
-				if($value == 'field_cpt_references'){ 
-					$pfield_name = 'field_cpt_code_refs';
+				if($value == 'field_cpt_code_references'){ 
+					$pfield_name = 'field_cpt_code_references';
 					$markup = 'full_html';
 				}	
 				 
@@ -839,13 +837,13 @@ class ArticleContent extends ResourceBase {
 		$field_values = [];
 		$icd_term_id = 'icd_10';
 		$icd_paragraph_id = 'icd_10';
-		$field_icd_10_info = 'field_icd_10_info';
+		$field_icd_10_info = 'field_icd_10';
 
 		$icd_fields = array(
-			'field_icd_common_name' ,
+			'field_diagnostic_guide_name' ,
 			'field_icd_10_diagnosis',
-			'field_icd_10_special_instruction',
-			'field_icd_10_code_references'
+			'field_instructions_icd_10',
+			'field_icd_10_references'
 		);
 
 		$icd_field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('paragraph', $icd_paragraph_id);
