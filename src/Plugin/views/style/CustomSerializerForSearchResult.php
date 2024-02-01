@@ -38,7 +38,7 @@ class CustomSerializerForSearchResult extends Serializer implements CacheableDep
       
       if(!empty($filters_array)){
 
-        $cats = array('diagnosis','test_and_sign_list','work_up_options','hand_therapy_library');
+        $cats = array('diagnosis','exams_and_signs_list','diagnostic_studies','hand_therapy_library');
         $common_cats = array_intersect($cats, $filters_array);
         $check_cats = empty($common_cats) ? $cats : $common_cats;
 
