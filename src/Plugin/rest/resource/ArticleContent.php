@@ -606,7 +606,7 @@ class ArticleContent extends ResourceBase {
 				//field_youtube_video':				
 				$id = $clitem['target_id'];
 				if ($id) {
-					$cl_object = \Drupal\field_collection\Entity\FieldCollectionItem::load($id);
+					$cl_object = \Drupal\paragraphs\Entity\Paragraph::load($id);
 					//$cl_object_array = $cl_object->toArray();
 					$field_values[$id] = [];							
 					
@@ -843,7 +843,7 @@ class ArticleContent extends ResourceBase {
 			'field_diagnostic_guide_name' ,
 			'field_icd_10_diagnosis',
 			'field_instructions_icd_10',
-			'field_icd_10_references'
+			'field_icd_10_reference'
 		);
 
 		$icd_field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('paragraph', $icd_paragraph_id);
