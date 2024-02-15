@@ -217,19 +217,19 @@ class PageContent extends ResourceBase {
 		  ON terms.tid = a.entity_id
 		  JOIN
 		  {paragraphs_item} AS b
-		  ON a.field_page_view_customization_value = b.id
+		  ON a.field_page_view_customization_target_id = b.id
 		  JOIN
 		  {paragraph__field_article_title} AS c
-		  ON a.field_page_view_customization_value = c.entity_id 
+		  ON a.field_page_view_customization_target_id = c.entity_id 
 		  LEFT JOIN 
 		  {paragraph__field_jump_to} AS d
-		  ON a.field_page_view_customization_value = d.entity_id AND d.deleted = '0' AND d.bundle = :field_pvc
+		  ON a.field_page_view_customization_target_id = d.entity_id AND d.deleted = '0' AND d.bundle = :field_pvc
 		  LEFT JOIN 
 		  {paragraph__field_redirect_to} AS e
-		  ON a.field_page_view_customization_value = e.entity_id AND e.deleted = '0' AND e.bundle = :field_pvc
+		  ON a.field_page_view_customization_target_id = e.entity_id AND e.deleted = '0' AND e.bundle = :field_pvc
 		  LEFT JOIN 
 		  {paragraph__field_label_group} AS f
-		  ON a.field_page_view_customization_value = f.entity_id AND f.deleted = '0' AND f.bundle = :field_pvc
+		  ON a.field_page_view_customization_target_id = f.entity_id AND f.deleted = '0' AND f.bundle = :field_pvc
 		  LEFT JOIN 
 		  {taxonomy_term_field_data} AS fdata
 		  ON f.field_label_group_target_id = fdata.tid AND fdata.vid = :glabel AND fdata.status = '1'
