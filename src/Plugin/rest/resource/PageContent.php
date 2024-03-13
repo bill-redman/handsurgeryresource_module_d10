@@ -187,6 +187,8 @@ class PageContent extends ResourceBase {
 
 		$marked = false;
 
+		return $marked;
+
 		if(is_null($this->bookmarks)){
 			$this->bookmarks = FlagTerm::get_bookmarked_term_ids();			
 		}
